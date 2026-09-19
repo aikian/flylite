@@ -58,7 +58,7 @@ boxes = [("Connectome graph", "G = (V, E, w), FlyWire v630\n127,400 neurons\n14.
          ("Sparsification operator", "budget bₖ = |{ |w| > k }|\nk ∈ {1, 2, 3, 5, 10,\n20, 31, 50}\n6 operators (Table 2)", "#fdeee6"),
          ("Whole-brain LIF model", "Shiu et al. 2024 (Brian2)\nsilent (σ = 0) or\nspontaneously active\n(σ = 3.0 / 3.5 mV)", "#e8f7f0"),
          ("Validated tasks", "sugar GRNs → MN9\n+ bitter GRNs → suppression\nJON-CE vs JON-F → aBN1\n(pathway specificity)", "#fff6e0"),
-         ("Function metrics", "G′ vs G: readout ratio (behaviour)\nPearson r, Jaccard (neural)\nsuppression index\nspecificity", "#f3f0fa")]
+         ("Metrics (G′ vs G)", "readout ratio (behaviour)\nPearson r, Jaccard (neural)\nsuppression index\nspecificity", "#f3f0fa")]
 bw, gap, x0, y0, bh = 18.0, 2.5, 0.0, 3.5, 24.5
 for i, (head, body, fc) in enumerate(boxes):
     x = x0 + i * (bw + gap)
