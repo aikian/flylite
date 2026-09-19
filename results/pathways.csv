@@ -1,0 +1,5 @@
+pathway,n_src,direct_edges,direct_syn,first_hop_edges,first_hop_median_syn,first_hop_frac_le2,first_hop_frac_le5,n_intermediates,inter_to_target_edges,inter_to_target_exc_syn,inter_to_target_inh_syn,inter_to_target_frac_le5
+JON-CE -> aBN1,70,18,77,4790,2.0,0.5870563674321503,0.8029227557411274,890,188,418,736,0.8085106382978723
+JON-F -> aBN1,60,16,69,1644,1.0,0.7931873479318735,0.9409975669099757,351,78,222,671,0.7435897435897436
+sugar -> MN9,21,0,0,1547,2.0,0.5475113122171946,0.7718164188752424,286,13,108,11,0.7692307692307693
+bitter -> MN9,21,0,0,1439,2.0,0.684503127171647,0.8707435719249479,273,7,4,5,1.0
