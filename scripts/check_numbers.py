@@ -6,7 +6,8 @@ Prints OK / MISSING so a reviewer-proof draft never drifts from the data.  usage
 import re, sys
 import numpy as np, pandas as pd
 
-draft = open(sys.argv[1] if len(sys.argv) > 1 else "FlyLite_논문초안_국문_v3.md", encoding="utf-8").read()
+draft = open(sys.argv[1] if len(sys.argv) > 1 else "FlyLite_논문초안_국문_v4.md", encoding="utf-8").read()
+EN = draft.lstrip().startswith("# How sparse")  # English manuscript uses different literal phrasings for a few multi-value checks
 A = pd.read_csv("results/phaseA/summary.csv"); A2 = pd.read_csv("results/phaseA2/summary.csv"); B = pd.read_csv("results/phaseB/summary.csv")
 C = pd.read_csv("results/phaseC/summary.csv"); D = pd.read_csv("results/phaseD/summary.csv")
 R, P, J, N = ["sugar100__" + x for x in ("readout_ratio", "pearson_union", "jaccard_active", "n_active")]
@@ -46,7 +47,7 @@ rm = C[(C.task == "sugar") & (C.method == "randm")]
 for k, lit in [(1, "0.96–1.01"), (2, "0.93–1.00")]:
     v = rm[rm.k == k][R]; add(f"randm k={k} range", (v.min(), v.max()), lit)
 add("randm k=3 mean", rm[rm.k == 3][R].mean(), "0.86"); add("randm k=3 min", rm[rm.k == 3][R].min(), "0.64"); add("randm k=3 max", rm[rm.k == 3][R].max(), "0.97")
-add("randm k=5 mean", rm[rm.k == 5][R].mean(), "0.34"); add("randm k=5 seeds", tuple(np.round(seeds(C, R, task="sugar", method="randm", k=5), 2)), "0.18, 0.20, 0.67, 0.26, 0.40")
+add("randm k=5 mean", rm[rm.k == 5][R].mean(), "0.34"); add("randm k=5 seeds", tuple(np.round(seeds(C, R, task="sugar", method="randm", k=5), 2)), "0.18, 0.20, 0.67, 0.26 and 0.40" if EN else "0.18, 0.20, 0.67, 0.26, 0.40")
 add("randm k=10 max", rm[rm.k == 10][R].max(), "0.03")
 add("randm k=5 mass", rm[rm.k == 5].frac_syn.mean() * 100, "41%"); add("randm k=10 mass", rm[rm.k == 10].frac_syn.mean() * 100, "24%")
 
@@ -61,16 +62,16 @@ bm = B[(B.task == "bitter") & (B.noise == 0) & (B.method == "mag")].sort_values(
 si = 1 - bm["sugar100_bitter100__readout"] / bm["sugar100__readout"]
 add("bitter SI sigma0 k=2,5,10", tuple(np.round(si.values[1:4], 2)), "0.96, 0.87, 0.93"); add("bitter SI sigma0 k=31", si.values[4], "0.32")
 gm = B[(B.task == "groom") & (B.noise == 0) & (B.method == "mag")].sort_values("k")
-add("groom CE ratio k=2,5,10", tuple(np.round(gm[gm.k > 0]["jonCE100__readout_ratio"].values[:3], 2)), "0.73, k = 5에서 0.23, k = 10에서 0.03")
+add("groom CE ratio k=2,5,10", tuple(np.round(gm[gm.k > 0]["jonCE100__readout_ratio"].values[:3], 2)), "0.73 already at k = 2, 0.23 at k = 5 and 0.03 at k = 10" if EN else "0.73, k = 5에서 0.23, k = 10에서 0.03")
 add("groom spec k=2", gm[gm.k > 0].specificity.values[0], "14.7"); add("groom spec k=5", gm[gm.k > 0].specificity.values[1], "−2.7")
 
 # --- H2 state: bitter sigma 3.5 trial 10 (Phase D), sugar A2
 dm = D[D.method == "mag"].sort_values("k"); si_d = 1 - dm["sugar100_bitter100__readout"] / dm["sugar100__readout"]
-add("bitter SI sigma3.5 (D) k=0,2,5,10,31", tuple(np.round(si_d.values, 2)), "0.83 → k = 2에서 0.91 → **k = 5에서 0.72 → k = 10에서 0.40 → k = 31에서 −0.61")
-add("D sugar+bitter Hz", tuple(np.round(dm["sugar100_bitter100__readout"].values, 1)), "5.9 ± 2.9(원본, 평균 ± SE) → 3.5 ± 0.7 → 15.1 ± 7.3 → 31.0 ± 11.1 → 48.1 ± 10.7")
-add("D sugar Hz", tuple(np.round(dm["sugar100__readout"].values, 1)), "34.8 → 40.2 → 53.5 → 51.5 → 29.9")
-r1 = seeds(A2, R, noise=3.5, method="rand", k=1); add("A2 rand k=1 seeds", tuple(np.round(r1, 2)), "0.96, 0.39, 0.82, 0.02, 0.10")
-r3 = seeds(A2, R, noise=3.5, method="rand", k=3); add("A2 rand k=3 seeds", tuple(np.round(r3, 2)), "0.13, 0.08, 1.02, 0.02, 0.28")
+add("bitter SI sigma3.5 (D) k=0,2,5,10,31", tuple(np.round(si_d.values, 2)), "0.83 (full) to 0.91 at k = 2, **0.72 at k = 5, 0.40 at k = 10 and −0.61 at k = 31**" if EN else "0.83 → k = 2에서 0.91 → **k = 5에서 0.72 → k = 10에서 0.40 → k = 31에서 −0.61")
+add("D sugar+bitter Hz", tuple(np.round(dm["sugar100_bitter100__readout"].values, 1)), "5.9 ± 2.9 Hz (full, mean ± SE) to 3.5 ± 0.7, 15.1 ± 7.3, 31.0 ± 11.1 and 48.1 ± 10.7" if EN else "5.9 ± 2.9(원본, 평균 ± SE) → 3.5 ± 0.7 → 15.1 ± 7.3 → 31.0 ± 11.1 → 48.1 ± 10.7")
+add("D sugar Hz", tuple(np.round(dm["sugar100__readout"].values, 1)), "34.8, 40.2, 53.5, 51.5 and 29.9" if EN else "34.8 → 40.2 → 53.5 → 51.5 → 29.9")
+r1 = seeds(A2, R, noise=3.5, method="rand", k=1); add("A2 rand k=1 seeds", tuple(np.round(r1, 2)), "0.96, 0.39, 0.82, 0.02 and 0.10" if EN else "0.96, 0.39, 0.82, 0.02, 0.10")
+r3 = seeds(A2, R, noise=3.5, method="rand", k=3); add("A2 rand k=3 seeds", tuple(np.round(r3, 2)), "0.13, 0.08, 1.02, 0.02 and 0.28" if EN else "0.13, 0.08, 1.02, 0.02, 0.28")
 add("A2 rand k=1 median", np.median(r1), "0.39"); add("A2 rand k=3 median", np.median(r3), "0.13")
 mm = {k: one(A2, noise=3.5, method="mag", k=k) for k in [1, 3, 5, 10, 20, 31]}
 add("A2 mag k=1,3,5,10 ratio", tuple(np.round([mm[k][R] for k in [1, 3, 5, 10]], 2)), "1.03, 1.03, 1.59, 1.23")
