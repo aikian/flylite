@@ -173,6 +173,8 @@ def main():
     ap.add_argument("--t-ms", type=float, default=1000)
     ap.add_argument("--out", default="results/flylite")
     ap.add_argument("--save-rates", action="store_true", help="store per-neuron mean rates (npz) per variant")
+    ap.add_argument("--connectome", default="630", choices=["630", "783"], help="FlyWire materialisation (Phase F robustness: 783)")
+    ap.add_argument("--w-syn-scale", type=float, default=1.0, help="multiply the synaptic gain w_syn (Phase F robustness: 0.8 / 1.2)")
     a = ap.parse_args()
 
     out = HERE / a.out; out.mkdir(parents=True, exist_ok=True)
@@ -183,6 +185,11 @@ def main():
         done = set(zip(s.task, s.noise, s.method, s.k, s.seed))
 
     params = dict(M.default_params)
+    params["w_syn"] = params["w_syn"] * a.w_syn_scale
+    global PATH_COMP, PATH_CON
+    if a.connectome == "783":
+        PATH_COMP, PATH_CON = REPO / "Completeness_783.csv", REPO / "Connectivity_783.parquet"
+    print(f">>> connectome {a.connectome}  w_syn x{a.w_syn_scale}", flush=True)
     t_run = a.t_ms * ms
     df_comp = pd.read_csv(PATH_COMP, index_col=0)
     flyid2i = {j: i for i, j in enumerate(df_comp.index)}

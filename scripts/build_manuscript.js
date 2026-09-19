@@ -58,7 +58,7 @@ function figure(name) {
 
 // ---- walk the markdown
 const body = []; let i = 0; let inFigs = false; let front = true;   // front = title block before the Abstract heading
-const skipNote = /^> English manuscript v1/;
+const skipNote = /^> (English manuscript v1|Journal version for)/;
 while (i < md.length) {
   let line = md[i];
   if (!line.trim() || line.trim() === "---") { i++; continue; }
@@ -68,6 +68,7 @@ while (i < md.length) {
     body.push(new Paragraph({ text: t, heading: HeadingLevel.HEADING_1, spacing: { before: isAbs ? 600 : 360, after: 160 } })); i++; continue; }
   if (line.startsWith("### ")) { body.push(new Paragraph({ text: line.slice(4).trim(), heading: HeadingLevel.HEADING_2, spacing: { before: 240, after: 120 } })); i++; continue; }
   if (line.startsWith("|")) { const rows = []; while (i < md.length && md[i].startsWith("|")) rows.push(md[i++]); body.push(table(rows)); body.push(new Paragraph({ spacing: { after: 120 } })); continue; }
+  if (line.startsWith("- ")) { body.push(new Paragraph({ children: runs(line.slice(2)), numbering: { reference: "bullets", level: 0 }, spacing: { after: 80, line: LINE } })); i++; continue; }
   if (/^\d+\. /.test(line)) { body.push(new Paragraph({ children: runs(line.replace(/^\d+\. /, "")), numbering: { reference: "refs", level: 0 }, spacing: { after: 80 } })); i++; continue; }
   if (line.startsWith("> ")) { body.push(P(line.slice(2), { run: { italics: true, color: "555555" } })); i++; continue; }
   // figure legend paragraph: insert the image before its legend
@@ -84,7 +85,7 @@ const doc = new Document({
     paragraphStyles: [
       { id: "Heading1", name: "Heading 1", basedOn: "Normal", next: "Normal", quickFormat: true, run: { size: 28, bold: true, font: "Calibri" }, paragraph: { spacing: { before: 360, after: 160 }, outlineLevel: 0 } },
       { id: "Heading2", name: "Heading 2", basedOn: "Normal", next: "Normal", quickFormat: true, run: { size: 24, bold: true, font: "Calibri" }, paragraph: { spacing: { before: 240, after: 120 }, outlineLevel: 1 } }] },
-  numbering: { config: [{ reference: "refs", levels: [{ level: 0, format: LevelFormat.DECIMAL, text: "%1.", alignment: AlignmentType.LEFT, style: { paragraph: { indent: { left: 480, hanging: 480 } } } }] }] },
+  numbering: { config: [{ reference: "bullets", levels: [{ level: 0, format: LevelFormat.BULLET, text: "•", alignment: AlignmentType.LEFT, style: { paragraph: { indent: { left: 480, hanging: 300 } } } }] }, { reference: "refs", levels: [{ level: 0, format: LevelFormat.DECIMAL, text: "%1.", alignment: AlignmentType.LEFT, style: { paragraph: { indent: { left: 480, hanging: 480 } } } }] }] },
   sections: [{ properties: { page: { size: { width: 12240, height: 15840 }, margin: { top: 1440, bottom: 1440, left: 1440, right: 1440 } },
       ...(LAYOUT === "journal" ? { lineNumbers: { countBy: 1, restart: LineNumberRestartFormat.CONTINUOUS, distance: 360 } } : {}) },
     footers: { default: new Footer({ children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ children: [PageNumber.CURRENT], size: 18, color: "777777" })] })] }) },
