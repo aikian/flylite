@@ -30,7 +30,7 @@ scripts/                  analysis and figure scripts (see below)
 results/phase*_summary.csv   every simulated condition (Phase A–D)
 results/randm_overlap.csv    edge/mass overlap between randm_k and mag_k (Table S2)
 results/*_by_k.csv, pathways.csv   anatomy of removed/retained edges (Fig 6)
-figures/                  Fig 1–6, S1 as published
+figures/                  Fig 1–6, S1, S3 as in the manuscript (PNG 300 dpi + PDF)
 colab/                    notebook used for the Colab runs (Phase B/C)
 docs/preregistered_design_v1.md   hypotheses H1–H6 and predictions fixed before Phase A (Korean)
 ```
@@ -52,7 +52,7 @@ docs/preregistered_design_v1.md   hypotheses H1–H6 and predictions fixed befor
    ```
    python scripts/analyze_flylite.py results/phaseA          # cliff k*, hypothesis tables, quick figure
    python scripts/analyze_phaseC.py                          # six-operator aggregates + randm/mag overlap
-   python scripts/plot_fig1_figS1.py; python scripts/plot_fig2_six.py; python scripts/plot_fig3_fig4.py; python scripts/plot_taskdep.py
+   python scripts/make_figures_final.py                     # all manuscript figures (results/final/); plot_*.py are the draft versions
    python scripts/check_numbers.py <draft.md>                # every number quoted in the manuscript vs the CSVs
    ```
    The scripts expect `results/<phase>/summary.csv`; copy or symlink the flat CSVs in `results/` accordingly.
