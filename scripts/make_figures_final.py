@@ -307,3 +307,23 @@ for ax, M, ttl, fmt in [(axes[0], kept_frac * 100, "edges surviving k = 10 (% of
     ax.set_xticks(np.arange(-.5, len(order), 1), minor=True); ax.set_yticks(np.arange(-.5, len(order), 1), minor=True); ax.grid(which="minor", color="white", lw=.8); ax.tick_params(which="minor", length=0)
     cb = fig.colorbar(im, ax=ax, fraction=0.04, pad=0.02); cb.ax.tick_params(labelsize=6); cb.set_label("%", fontsize=6.5, color=INK2)
 fig.tight_layout(); save(fig, "figS3")
+
+# =============================================================================================== Fig S2 (Phase F robustness: connectome version and synaptic gain)
+FA = A[(A.noise == 0) & (A.method == "mag") & (A.k > 0)].sort_values("k")
+PF = {"v783 x1.0": pd.read_csv("results/phaseF_783/summary.csv"), "v630 x0.8": pd.read_csv("results/phaseF_w08/summary.csv"), "v630 x1.2": pd.read_csv("results/phaseF_w12/summary.csv")}
+FCOL = {"v630 x1.0": (OP["mag"][0], "o", "-", "v630, w_syn x1.0 (reference)"), "v783 x1.0": ("#1baf7a", "D", "-", "v783, w_syn x1.0"),
+        "v630 x0.8": ("#eda100", "v", "--", "v630, w_syn x0.8"), "v630 x1.2": ("#e34948", "^", "--", "v630, w_syn x1.2")}
+fig, axes = plt.subplots(1, 3, figsize=(W, 2.7))
+for name, (col_, mk, ls, lab) in FCOL.items():
+    if name == "v630 x1.0":
+        d = FA; ref = float(FA["sugar100__readout_full"].iloc[0])
+    else:
+        d = PF[name][PF[name].k > 0].sort_values("k"); ref = float(PF[name][PF[name].k == 0]["sugar100__readout_full"].iloc[0])
+    axes[0].plot(d.frac_edges * 100, d[R], ls, color=col_, marker=mk, mec="white", mew=.5, label=lab)
+    axes[1].plot(d.frac_edges * 100, d[P], ls, color=col_, marker=mk, mec="white", mew=.5, label=lab)
+    axes[2].plot(d.frac_edges * 100, d[R] * ref, ls, color=col_, marker=mk, mec="white", mew=.5, label=f"{lab.split(' (')[0]} (full: {ref:.0f} Hz)")
+for ax in axes: logx(ax, ticks=(50, 30, 10, 3)); ax.set_xlim(60, 1.5)
+axes[0].axhline(1, ls="--", c=INK2, lw=.5); axes[0].axhline(0.8, ls=":", c=INK2, lw=.5); axes[0].set_ylim(-0.05, 1.25); axes[0].set_ylabel("MN9 rate / full model"); panel(axes[0], "a", "readout ratio"); axes[0].legend(loc="lower left")
+axes[1].set_ylim(0.2, 1.05); axes[1].set_ylabel("Pearson r (active union)"); panel(axes[1], "b", "population response")
+axes[2].set_ylabel("MN9 rate (Hz)"); panel(axes[2], "c", "absolute readout"); axes[2].legend(loc="center left", bbox_to_anchor=(0.0, 0.40), fontsize=6)
+fig.tight_layout(); save(fig, "figS2")

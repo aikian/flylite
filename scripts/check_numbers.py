@@ -78,6 +78,18 @@ add("A2 mag k=1,3,5,10 ratio", tuple(np.round([mm[k][R] for k in [1, 3, 5, 10]],
 add("A2 mag corr k=10", mm[10][P], "0.88"); add("A2 mag corr k=31", mm[31][P], "0.70")
 add("A2 ref sugar Hz", one(A2, noise=3.5, method="mag", k=0)["sugar100__readout_full"], "37.0")
 
+# --- Phase F robustness (sugar sigma 0, mag k=5,10,20): v783, gain 0.8x, 1.2x
+PF = {n: pd.read_csv(f"results/{d}/summary.csv") for n, d in [("783", "phaseF_783"), ("w08", "phaseF_w08"), ("w12", "phaseF_w12")]}
+def fref(n): return float(PF[n][PF[n].k == 0]["sugar100__readout_full"].iloc[0])
+def fr(n, k): return float(PF[n][PF[n].k == k][R].iloc[0])
+def fc(n, k): return float(PF[n][PF[n].k == k][P].iloc[0])
+add("F ref 783", fref("783"), "65.0 Hz"); add("F ref w08", fref("w08"), "35.7 Hz"); add("F ref w12", fref("w12"), "81.0 Hz")
+add("F 783 k5,10,20", (round(fr("783", 5), 2), round(fr("783", 10), 2), round(fr("783", 20), 2)), "0.71 at k = 5, 0.70 at k = 10 and 0.06 at k = 20" if EN else "0.71, 0.70, 0.06")
+add("F 783 corr", (round(fc("783", 5), 2), round(fc("783", 10), 2), round(fc("783", 20), 2)), "0.94, 0.81, 0.60")
+add("F w08 k5,k10", (round(fr("w08", 5), 2), round(fr("w08", 10), 2)), "0.22 at k = 5 and 0.06 at k = 10" if EN else "이미 0.22, k = 10에서 0.06")
+add("F w12 k5,10,20", (round(fr("w12", 5), 2), round(fr("w12", 10), 2), round(fr("w12", 20), 2)), "0.87, 0.97 and 0.56" if EN else "0.87, 0.97, 0.56")
+add("F w08 corr k10", fc("w08", 10), "0.86")
+
 # --- report
 bad = 0
 for label, value, literal in checks:
