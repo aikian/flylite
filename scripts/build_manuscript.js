@@ -15,19 +15,22 @@ const TEX = [[/\\tau_m/g, "τₘ"], [/\\tau_s/g, "τₛ"], [/\\sigma/g, "σ"], [
 function tex(s) { for (const [re, r] of TEX) s = s.replace(re, r); return s.replace(/[{}]/g, "").replace(/⦃/g, "{").replace(/⦄/g, "}"); }
 
 // ---- inline markdown: **bold**, *italic*, `code`, $math$ -> TextRuns
+const AST = "⁢AST⁢";  // token for an escaped literal asterisk (markdown "\*"), restored after inline parsing
 function runs(text, base = {}) {
+  text = text.replace(/\\\*/g, AST).replace(/\\_/g, "_");
+  const restore = t => t.split(AST).join("*");
   const out = []; let i = 0;
   const re = /(\*\*[^*]+\*\*|\*[^*\n]+\*|`[^`]+`|\$[^$]+\$)/g; let m;
   while ((m = re.exec(text)) !== null) {
-    if (m.index > i) out.push(new TextRun({ text: text.slice(i, m.index), ...base }));
+    if (m.index > i) out.push(new TextRun({ text: restore(text.slice(i, m.index)), ...base }));
     const t = m[0];
-    if (t.startsWith("**")) out.push(new TextRun({ text: t.slice(2, -2), bold: true, ...base }));
-    else if (t.startsWith("`")) out.push(new TextRun({ text: t.slice(1, -1), font: "Consolas", size: 18, ...base }));
-    else if (t.startsWith("$")) out.push(new TextRun({ text: tex(t.slice(1, -1)), italics: true, ...base }));
-    else out.push(new TextRun({ text: t.slice(1, -1), italics: true, ...base }));
+    if (t.startsWith("**")) out.push(new TextRun({ text: restore(t.slice(2, -2)), bold: true, ...base }));
+    else if (t.startsWith("`")) out.push(new TextRun({ text: restore(t.slice(1, -1)), font: "Consolas", size: 18, ...base }));
+    else if (t.startsWith("$")) out.push(new TextRun({ text: restore(tex(t.slice(1, -1))), italics: true, ...base }));
+    else out.push(new TextRun({ text: restore(t.slice(1, -1)), italics: true, ...base }));
     i = m.index + t.length;
   }
-  if (i < text.length) out.push(new TextRun({ text: text.slice(i), ...base }));
+  if (i < text.length) out.push(new TextRun({ text: restore(text.slice(i)), ...base }));
   return out;
 }
 const P = (text, opts = {}) => new Paragraph({ children: runs(text, opts.run || {}), spacing: { after: 120, line: 300 }, alignment: opts.align, ...opts.para });
