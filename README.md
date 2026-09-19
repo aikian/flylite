@@ -63,7 +63,7 @@ docs/preregistered_design_v1.md   hypotheses H1–H6 and predictions fixed befor
 
 ## Citing
 
-Please cite the manuscript (preprint DOI to be added) and Shiu et al. (2024) for the model, Dorkenwald et al. (2024) and Schlegel et al. (2024) for the connectome.
+Please cite the manuscript (bioRxiv preprint, DOI to be added; repository https://github.com/aikian/flylite) and Shiu et al. (2024) for the model, Dorkenwald et al. (2024) and Schlegel et al. (2024) for the connectome.
 
 ## License
 
