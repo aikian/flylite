@@ -2,7 +2,8 @@
 // usage: node build_manuscript.js ../FlyLite_manuscript_EN_v1.md ../results/final ../FlyLite_manuscript_EN_v1.docx
 const fs = require("fs"), path = require("path");
 const { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, WidthType, AlignmentType,
-        ImageRun, PageBreak, ShadingType, BorderStyle, LevelFormat, Footer, PageNumber } = require("docx");
+        ImageRun, PageBreak, ShadingType, BorderStyle, LevelFormat, Footer, PageNumber, LineNumberRestartFormat } = require("docx");
+const LAYOUT = process.env.LAYOUT || "journal";   // "journal": centred title block, 1.5 spacing, line numbers, keywords
 
 const [mdPath, figDir, outPath] = process.argv.slice(2);
 const md = fs.readFileSync(mdPath, "utf8").split(/\r?\n/);
@@ -33,7 +34,8 @@ function runs(text, base = {}) {
   if (i < text.length) out.push(new TextRun({ text: restore(text.slice(i)), ...base }));
   return out;
 }
-const P = (text, opts = {}) => new Paragraph({ children: runs(text, opts.run || {}), spacing: { after: 120, line: 300 }, alignment: opts.align, ...opts.para });
+const LINE = LAYOUT === "journal" ? 360 : 300;
+const P = (text, opts = {}) => new Paragraph({ children: runs(text, opts.run || {}), spacing: { after: 120, line: LINE }, alignment: opts.align, ...opts.para });
 
 // ---- table from markdown pipe rows
 function table(rows) {
@@ -55,14 +57,15 @@ function figure(name) {
 }
 
 // ---- walk the markdown
-const body = []; let i = 0; let inFigs = false;
+const body = []; let i = 0; let inFigs = false; let front = true;   // front = title block before the Abstract heading
 const skipNote = /^> English manuscript v1/;
 while (i < md.length) {
   let line = md[i];
   if (!line.trim() || line.trim() === "---") { i++; continue; }
   if (skipNote.test(line)) { i++; continue; }
-  if (line.startsWith("# ")) { body.push(new Paragraph({ children: runs(line.slice(2), { size: 30, bold: true }), spacing: { after: 240 }, alignment: AlignmentType.LEFT })); i++; continue; }
-  if (line.startsWith("## ")) { const t = line.slice(3).trim(); inFigs = /^Figure legends/.test(t); body.push(new Paragraph({ text: t, heading: HeadingLevel.HEADING_1, spacing: { before: 360, after: 160 } })); i++; continue; }
+  if (line.startsWith("# ")) { body.push(new Paragraph({ children: runs(line.slice(2), { size: 32, bold: true }), spacing: { after: 360, line: 300 }, alignment: AlignmentType.CENTER })); i++; continue; }
+  if (line.startsWith("## ")) { const t = line.slice(3).trim(); inFigs = /^Figure legends/.test(t); const isAbs = /^Abstract/.test(t); if (isAbs) front = false;
+    body.push(new Paragraph({ text: t, heading: HeadingLevel.HEADING_1, spacing: { before: isAbs ? 600 : 360, after: 160 } })); i++; continue; }
   if (line.startsWith("### ")) { body.push(new Paragraph({ text: line.slice(4).trim(), heading: HeadingLevel.HEADING_2, spacing: { before: 240, after: 120 } })); i++; continue; }
   if (line.startsWith("|")) { const rows = []; while (i < md.length && md[i].startsWith("|")) rows.push(md[i++]); body.push(table(rows)); body.push(new Paragraph({ spacing: { after: 120 } })); continue; }
   if (/^\d+\. /.test(line)) { body.push(new Paragraph({ children: runs(line.replace(/^\d+\. /, "")), numbering: { reference: "refs", level: 0 }, spacing: { after: 80 } })); i++; continue; }
@@ -70,7 +73,8 @@ while (i < md.length) {
   // figure legend paragraph: insert the image before its legend
   const fm = inFigs && line.match(/^\*\*(Figure (S?\d+))\./);
   if (fm) { const img = figure("fig" + fm[2]); if (img) { body.push(new Paragraph({ children: [new PageBreak()] })); body.push(img); } }
-  // author line / affiliation lines: keep as-is
+  if (front) { body.push(P(line, { align: AlignmentType.CENTER, run: line.startsWith("**") ? { size: 24 } : { size: 20 }, para: { spacing: { after: 80, line: 276 } } })); i++; continue; }   // author / affiliation / correspondence
+  if (/^\*\*Keywords:\*\*/.test(line)) { body.push(P(line, { run: { size: 20 }, para: { spacing: { before: 120, after: 240, line: 276 } } })); i++; continue; }
   body.push(P(line)); i++;
 }
 
@@ -81,7 +85,8 @@ const doc = new Document({
       { id: "Heading1", name: "Heading 1", basedOn: "Normal", next: "Normal", quickFormat: true, run: { size: 28, bold: true, font: "Calibri" }, paragraph: { spacing: { before: 360, after: 160 }, outlineLevel: 0 } },
       { id: "Heading2", name: "Heading 2", basedOn: "Normal", next: "Normal", quickFormat: true, run: { size: 24, bold: true, font: "Calibri" }, paragraph: { spacing: { before: 240, after: 120 }, outlineLevel: 1 } }] },
   numbering: { config: [{ reference: "refs", levels: [{ level: 0, format: LevelFormat.DECIMAL, text: "%1.", alignment: AlignmentType.LEFT, style: { paragraph: { indent: { left: 480, hanging: 480 } } } }] }] },
-  sections: [{ properties: { page: { size: { width: 12240, height: 15840 }, margin: { top: 1440, bottom: 1440, left: 1440, right: 1440 } } },
+  sections: [{ properties: { page: { size: { width: 12240, height: 15840 }, margin: { top: 1440, bottom: 1440, left: 1440, right: 1440 } },
+      ...(LAYOUT === "journal" ? { lineNumbers: { countBy: 1, restart: LineNumberRestartFormat.CONTINUOUS, distance: 360 } } : {}) },
     footers: { default: new Footer({ children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ children: [PageNumber.CURRENT], size: 18, color: "777777" })] })] }) },
     children: body }],
 });
