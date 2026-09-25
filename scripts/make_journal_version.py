@@ -38,7 +38,7 @@ The author declares no competing interests.
 
 ## Data and Code Availability
 
-All code, result tables, figure sources and the pre-registered design are available at https://github.com/aikian/flylite (MIT licence). The reference model and connectome data are from https://github.com/philshiu/Drosophila_brain_model."""
+A preprint of this manuscript is available at https://doi.org/10.64898/2026.09.19.752860. All code, result tables, figure sources and the pre-registered design are available at https://github.com/aikian/flylite (MIT licence). The reference model and connectome data are from https://github.com/philshiu/Drosophila_brain_model."""
 
 REFS = """## References
 
@@ -60,7 +60,7 @@ def section(text, start, end):
     i = text.index(start); j = text.index(end, i + len(start)); return i, j
 
 # ---- header note
-s = s.replace("> English manuscript v1 (2026-09-19)", "> Journal version for *Network Neuroscience* (derived 2026-09-19 from preprint v1)", 1)
+s = s.replace("> English manuscript v1 (2026-09-19)", "> Journal version for *Network Neuroscience* (derived from the bioRxiv preprint https://doi.org/10.64898/2026.09.19.752860)", 1)
 
 # ---- abstract, keywords, author summary, technical terms
 i, j = section(s, "## Abstract", "**Keywords:**"); s = s[:i] + "## Abstract\n\n" + ABSTRACT + "\n\n" + s[j:]

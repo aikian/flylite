@@ -2,7 +2,7 @@
 
 Code, pre-registered design, result tables and figures for
 
-> *How sparse can a fly-brain model be? Connection strength, wiring placement, network state and task jointly determine function-preserving compression of the Drosophila connectome* (manuscript in preparation, 2026).
+> An, D. (2026). *How sparse can a fly-brain model be? Connection strength, wiring placement, network state and task jointly determine function-preserving compression of the Drosophila connectome.* bioRxiv. https://doi.org/10.64898/2026.09.19.752860
 
 Everything here runs on a laptop CPU (Intel i3, 8 GB RAM) or a free Google Colab CPU runtime. One whole-brain 1 s trial takes ≈ 65 s (silent network) to ≈ 100–180 s (noisy network) with the Brian2 NumPy backend.
 
@@ -63,7 +63,7 @@ docs/preregistered_design_v1.md   hypotheses H1–H6 and predictions fixed befor
 
 ## Citing
 
-Please cite the manuscript (bioRxiv preprint, DOI to be added; repository https://github.com/aikian/flylite) and Shiu et al. (2024) for the model, Dorkenwald et al. (2024) and Schlegel et al. (2024) for the connectome.
+Please cite the preprint — An, D. (2026). *How sparse can a fly-brain model be?* bioRxiv. https://doi.org/10.64898/2026.09.19.752860 — and this repository and Shiu et al. (2024) for the model, Dorkenwald et al. (2024) and Schlegel et al. (2024) for the connectome.
 
 ## License
 
