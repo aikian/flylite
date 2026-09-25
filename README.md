@@ -63,7 +63,7 @@ docs/preregistered_design_v1.md   hypotheses H1–H6 and predictions fixed befor
 
 ## Citing
 
-Please cite the preprint — An, D. (2026). *How sparse can a fly-brain model be?* bioRxiv. https://doi.org/10.64898/2026.09.19.752860 — and this repository and Shiu et al. (2024) for the model, Dorkenwald et al. (2024) and Schlegel et al. (2024) for the connectome.
+Please cite the preprint — An, D. (2026). *How sparse can a fly-brain model be?* bioRxiv. https://doi.org/10.64898/2026.09.19.752860 — and this repository. Cite Shiu et al. (2024) for the model, Dorkenwald et al. (2024) and Schlegel et al. (2024) for the connectome.
 
 ## License
 
