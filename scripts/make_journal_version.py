@@ -40,7 +40,11 @@ The author declares no competing interests.
 
 A preprint of this manuscript is available at https://doi.org/10.64898/2026.09.19.752860. All code, result tables, figure sources and the pre-registered design are available at https://github.com/aikian/flylite (MIT licence). The reference model and connectome data are from https://github.com/philshiu/Drosophila_brain_model."""
 
-REFS = """## References
+REFS = """## Declaration of generative AI and AI-assisted technologies in the writing process
+
+During the preparation of this work the author used Claude Opus 5 (Anthropic), through the Claude Code command-line interface, to draft and edit the text of this manuscript, to write the simulation, analysis and figure-generation scripts released with it, and to cross-check the reported numbers against the result tables. After using this tool, the author reviewed and edited the content as needed and takes full responsibility for the content of the published article.
+
+## References
 
 Berg, S., Beckett, I. R., Costa, M., Schlegel, P., et al. (2026). Sexual dimorphism in the complete *Drosophila* male central nervous system connectome. *Cell*, in press. Preprint: bioRxiv. https://doi.org/10.1101/2025.10.09.680999
 Dhiman, N. (2026). Topological sensitivity in connectome-constrained neural networks. *arXiv*, 2604.04033.

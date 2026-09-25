@@ -43,7 +43,11 @@ This research received no specific grant from any funding agency in the public, 
 
 All code, result tables, figure sources and the pre-registered design are publicly available at https://github.com/aikian/flylite (MIT licence). The reference model and connectome data are available at https://github.com/philshiu/Drosophila_brain_model. A preprint of this manuscript is available at https://doi.org/%s.""" % DOI
 
-REFS = """## References
+REFS = """## Declaration of generative AI and AI-assisted technologies in the writing process
+
+During the preparation of this work the author used Claude Opus 5 (Anthropic), through the Claude Code command-line interface, to draft and edit the text of this manuscript, to write the simulation, analysis and figure-generation scripts released with it, and to cross-check the reported numbers against the result tables. After using this tool, the author reviewed and edited the content as needed and takes full responsibility for the content of the published article.
+
+## References
 
 Berg, S., Beckett, I. R., Costa, M., Schlegel, P., et al. (2026). Sexual dimorphism in the complete *Drosophila* male central nervous system connectome. *Cell*, in press. Preprint: bioRxiv. https://doi.org/10.1101/2025.10.09.680999
 Blalock, D., Gonzalez Ortiz, J. J., Frankle, J., & Guttag, J. (2020). What is the state of neural network pruning? *Proceedings of Machine Learning and Systems (MLSys)*, 2, 129–146.
